@@ -1,2 +1,3 @@
 .venv
-students.db
+./NeuralNine/students.db
+./NeuralNine/school.db
