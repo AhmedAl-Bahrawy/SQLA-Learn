@@ -2,9 +2,10 @@ from sqlalchemy import (
     create_engine, MetaData, Table, Column,
     Integer, String, ForeignKey, Time
 )
+import os
 
 # إنشاء محرك SQLite
-engine = create_engine('sqlite:///students.db', echo=True)
+engine = create_engine('sqlite:///' + os.path.join(os.path.dirname(os.path.abspath(__file__)), "students.db"), echo=True)
 
 # تعريف الـ Metadata
 meta = MetaData()

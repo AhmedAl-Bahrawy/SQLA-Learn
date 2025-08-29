@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
-import pandas as pd
+import os
 
 
 Base = declarative_base()
@@ -63,7 +63,7 @@ class Class(Base):
     )
 
 # ===================== Database Setup =====================
-engine = create_engine("sqlite:///school.db", echo=True)
+engine = create_engine('sqlite:///' + os.path.join(os.path.dirname(os.path.abspath(__file__)), "school.db"), echo=True)
 Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
@@ -98,8 +98,3 @@ for s in class1.students:
 # 3. هات الكلاسات اللي الطالب Omar فيها
 for c in student.classes:
     print("Student Omar is in class:", c.days)
-
-
-
-df = pd.read_sql("SELECT * FROM classes", engine)
-print(df)
