@@ -1,3 +1,4 @@
+from enum import Flag
 from sqlalchemy import ForeignKey, create_engine, Column, Integer, String
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 import os
@@ -13,46 +14,31 @@ session = Session()
 
 Base = declarative_base()
 
-# ----- Models -----
-class User(Base):
-    __tablename__ = 'users'
-    
+
+class Node(Base):
+    __tablename__ = 'nodes'
+
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    # One-to-One (uselist=False)
-    address = relationship("Address", back_populates="user", uselist=False)
-
-
-class Address(Base):
-    __tablename__ = 'addresses'
+    value = Column(Integer, nullable=False)
     
-    id = Column(Integer, primary_key=True)
-    email_address = Column(String, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    user = relationship("User", back_populates="address")
+    node_id = Column(Integer, ForeignKey('nodes.id'))
+    next_node = relationship('Node', remote_side=[id], uselist=False)
+    
+    def __repr__(self):
+        return f"<Node value={self.value}, next node={self.next_node}>>"
 
 
-# ----- Create Tables -----
-#Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
 
-# ----- Insert Data -----
-# user1 = User(name="Ahmed Albahrawy")
-# address1 = Address(email_address="ahmedalbahrawy-2010@hotmail.com", user=user1)
-
-# session.add(user1)
-# session.add(address1)
-# session.commit()
-
-# ----- Test Output -----
-# print(address1.user.name)          # should print: Ahmed Albahrawy
-# print(user1.address.email_address) # should print: ahmedalbahrawy-2010@hotmail.co
-
-user1 =  session.query(User).filter_by(name="Ahmed Albahrawy").all()
 
 
 
-for u in user1:
-    print(f"User: {u.name}, Address: {u.address.email_address}")
+node1 = Node(value=1)
+node2 = Node(value=2)
+node3 = Node(value=3)
 
+node1.next_node = node2
+node2.next_node = node3
 
+session.add_all([node1, node2, node3])
+session.commit()
