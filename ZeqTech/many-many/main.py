@@ -1,6 +1,8 @@
-from sqlalchemy import ForeignKey, create_engine, Column, Integer, String
+from sqlalchemy import DateTime, ForeignKey, create_engine, Column, Integer, String
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 import os
+from datetime import datetime
+
 
 # ----- Database Config -----
 engine = create_engine(
@@ -22,33 +24,40 @@ class BaseModel(Base):
     
     id = Column(Integer, primary_key=True)
 
+class Appointment(BaseModel):
+    __tablename__ = "appointments"
+    
+    doctor_id = Column(Integer, ForeignKey("doctors.id"))
+    patient_id = Column(Integer, ForeignKey("patients.id"))
+    appointment_date = Column(DateTime, default=datetime.utcnow)
+    notes = Column(String)
+    
+    doctor = relationship("Doctor", back_populates="appointments")
+    patient = relationship("Patient", back_populates="appointments")
+    
+    def __repr__(self):
+        return f"<Appointment(doctor={self.doctor.name}, patient={self.patient.name}, date={self.appointment_date})>"
+    
 
-class Student(BaseModel):
-    __tablename__ = "students"
+
+class Doctor(BaseModel):
+    __tablename__ = "doctors"
+    
     name = Column(String)
-    grade = Column(Integer)
-    courses = relationship("Course", secondary="student_course", back_populates="students")
-
-
-class Course(BaseModel):
-    __tablename__ = "courses"
-    name = Column(String)
-    teacher = relationship("Teacher", back_populates="courses")
-    teacher_id = Column(Integer, ForeignKey("teachers.id"))
-    students = relationship("Student", secondary="student_course")
+    specialization = Column(String)
+    appointments = relationship("Appointment", back_populates="doctor")
     
     
-class Teacher(BaseModel):
-    __tablename__ = "teachers"
+class Patient(BaseModel):
+    __tablename__ = "patients"
+    
     name = Column(String)
-    subject = Column(String)
-    courses = relationship("Course", back_populates="teacher")
+    age = Column(Integer)
+    dob = Column(DateTime)
+    appointments = relationship("Appointment", back_populates="patient")
+    
 
 
-class StudentCourse(BaseModel):
-    __tablename__ = "student_course"
-    student_id = Column(Integer, ForeignKey("students.id"))
-    course_id = Column(Integer, ForeignKey("courses.id"))
 
 
 Base.metadata.drop_all(engine)
@@ -56,31 +65,16 @@ Base.metadata.create_all(engine)
 
 
 
-Ahmed = Student(name="Ahmed", grade=10)
-Ali = Student(name="Ali", grade=10)
-Mohammed = Student(name="Mohammed", grade=10)
+Dr_Ahmed = Doctor(name="Dr. Ahmed", specialization="Cardiology")
+Dr_Ali = Doctor(name="Dr. Ali", specialization="Orthopedics")
 
+Mohammed_Ali = Patient(name="Mohammed Ali", age=35)
+Gad_Abdallah = Patient(name="Gad Abdallah", age=28)
 
-Mr_Emad = Teacher(name="Mr. Emad", subject="Math")
-Mr_Mahmoud = Teacher(name="Mr. Mahmoud", subject="Science")
-Mr_Helmy = Teacher(name="Mr. Helmy", subject="English")
+Appointment1 = Appointment(doctor=Dr_Ahmed, patient=Mohammed_Ali, appointment_date=datetime.now(), notes="Check-up")
+Appointment2 = Appointment(doctor=Dr_Ali, patient=Gad_Abdallah, appointment_date=datetime.now(), notes="Surgery")
 
-
-Mathatics = Course(name="Math", teacher=Mr_Emad)
-Science = Course(name="Science", teacher=Mr_Mahmoud)
-English = Course(name="English", teacher=Mr_Helmy)
-
-
-session.add_all([Ahmed, Ali, Mohammed, Mr_Emad, Mr_Mahmoud, Mr_Helmy, Mathatics, Science, English])
+session.add_all([Dr_Ahmed, Dr_Ali, Mohammed_Ali, Gad_Abdallah, Appointment1, Appointment2])
 session.commit()
 
-Ahmed.courses.append(Mathatics)
-Ali.courses.append(Science)
-Mohammed.courses.append(English)
-
-session.commit()
-
-
-
-
-
+print(Dr_Ahmed.appointments[0])
