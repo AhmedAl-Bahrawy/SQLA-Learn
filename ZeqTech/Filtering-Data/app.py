@@ -1,5 +1,6 @@
 from models import session, User
 import random
+from sqlalchemy import or_, and_, not_
 
 # List of names, ages, and emails
 
@@ -93,3 +94,37 @@ print(*(session.query(User).where(User.name == "Ahmed", User.age == 20).all() or
 # A quistion that i asked myself ----- what is the difference between filter and where?
 # Answer:
 # I do not know the answer yet, i will ask myself later.
+
+
+# filter by or_
+
+print(*(session.query(User).filter(or_(User.name == "Ahmed", User.age == 20)).all() or ["No users found"]), sep="\n")
+print('='*50)
+print()
+print('='*50)
+
+# filter by and_
+print(*(session.query(User).filter(and_(User.name == "Ahmed", User.age == 20)).all() or ["No users found"]), sep="\n")
+print('='*50)
+print()
+print('='*50)
+
+# filter by not_
+print(*(session.query(User).filter(not_(User.name == "Ahmed")).all() or ["No users found"]), sep="\n")
+print('='*50)
+print()
+print('='*50)
+
+# filter by not_in
+print(*(session.query(User).filter(User.name.not_in(["Ahmed", "Omar"])).all() or ["No users found"]), sep="\n")
+print('='*50)
+print()
+
+# filter by or_ , and_, not_ in one query
+print(*(session.query(User).filter(or_(User.name == "Ahmed", User.age == 20), and_(User.name == "Ahmed", User.age == 20), not_(User.name == "Mohammed")).all() or ["No users found"]), sep="\n")
+print('='*50)
+print()
+
+
+
+# ------------------------------------------------- THE END -------------------------------------------------
