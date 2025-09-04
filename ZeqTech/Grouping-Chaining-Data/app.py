@@ -32,6 +32,16 @@ print(*session.query(User.age, func.count(User.id)).group_by(User.age).all(), se
 
 
 print('-'*50)
+print()
 
+print(*session.query(
+    User.age, func.count(User.id)
+    ).
+    filter(User.age > 20).
+    order_by(User.age).
+    filter(User.age < 50).
+    group_by(User.age).
+    all()
+    , sep='\n')
 
 # ------------------------------------------------- THE END -------------------------------------------------
