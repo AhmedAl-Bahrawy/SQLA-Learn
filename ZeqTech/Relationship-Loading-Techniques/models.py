@@ -24,7 +24,7 @@ class User(BaseModel):
 
     name = Column(String)
     age = Column(Integer)
-    posts = relationship("Post", backref="user", lazy='select')
+    posts = relationship("Post", backref="user", lazy='selectin')
     
 
 

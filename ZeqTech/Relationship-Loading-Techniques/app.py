@@ -18,5 +18,31 @@ print(session.query(User).where(User.id == post.user_id).first())
 
 
 
+session.add_all(
+    [
+        User(
+            name = f"User {y}",
+            age = (y/2+1)*((1/2) * y),
+            posts = [
+                Post(
+                    title = f'This is the title for {y * 10 + x}',
+                    content = f'This is the content for {y * 10 + x}',
+                ) for x in range(50)
+            ],
+        ) for y in range(10_000)
+    ]
+)
+session.commit()
 
+
+#print(*session.query(User).all(), sep='\n')
+print('-'*100)
+print(*session.query(User).where(Post.user_id == User.id).all(), sep='\n')
+print('-'*100)
+print(*session.query(User.name, func.count(Post.id)).join(Post).group_by(User).all(), sep='\n')
+
+
+#print('-'*100) 
+#print(*((user.name, count) for user, count in session.query(User, func.count(Post.id)).join(Post).group_by(User.id).all()), sep='\n')
+#print('-'*100)
 # ------------------------------------------------- THE END -------------------------------------------------
