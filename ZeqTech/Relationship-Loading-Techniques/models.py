@@ -24,6 +24,14 @@ class User(BaseModel):
 
     name = Column(String)
     age = Column(Integer)
+    # Lazy loading options:
+    # 'select' (default) - Loads when accessed (N+1 problem)
+    # 'joined' - Uses JOIN to load in single query
+    # 'subquery' - Uses subquery to load all at once
+    # 'selectin' - Uses IN clause: SELECT * FROM posts WHERE user_id IN (1,2,3...)
+    #             Best for one-to-many relationships, avoids N+1 queries
+    # 'noload' - Never loads the relationship
+    # 'raise' - Raises error if accessed
     posts = relationship("Post", backref="user", lazy='selectin')
     
 
