@@ -128,18 +128,10 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Database files
+# SQLite databases (keep some for examples, ignore others)
 *.db
-*.sqlite
-*.sqlite3
-*.db-journal
-*.db-wal
-*.db-shm
-
-# Specific database files in your project
-NeuralNine/*.db
-ZeqTech/*/database.db
-ZeqTech/*/*.db
+!NeuralNine/school.db
+!NeuralNine/students.db
 
 # IDE files
 .vscode/
@@ -156,10 +148,6 @@ ZeqTech/*/*.db
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Logs
-*.log
-logs/
 
 # Temporary files
 *.tmp
